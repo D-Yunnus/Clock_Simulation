@@ -1,4 +1,4 @@
-function [x,y,w] = Improved_Clock_Simulator(N,t,X_0,diff,mu)
+function [x,y,w] = Clock_Simulator(N,t,X_0,diff,mu)
 
 % The function solves numerically the Weiner process (brownian motion) that
 % describes a clocks deviation in time and frequency described by x,y respectively.
