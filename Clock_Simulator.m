@@ -42,8 +42,6 @@ for i=2:N+1
 
     noise=mvnrnd(zeros(1,3),Q,1);
 
-    theta=unidrnd(N,1,3);
-
     % Numerical integration including (integrated) random walk stochastic
     % process.
 
