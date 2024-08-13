@@ -9,7 +9,7 @@ function [y_master,y_slave] = SyncE_Simulator(N,t,X0_master,diff_master,mu_maste
 
 % Initialise slave clock frequency.
 
-y_slave=zeros(X0_slave(2),N/t+1);
+y_slave=zeros(1,N/t+1);
 
 % Phase Lock Loop.
 % The phase lock loop has slave frequency match master frequency for each
