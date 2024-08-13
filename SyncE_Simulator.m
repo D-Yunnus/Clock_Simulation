@@ -38,4 +38,9 @@ for i=2:N/t+1
 
     X0_slave(2)=y_slave(i);
 end
+
+% Filter slave noise through a low pass filter
+
+y_slave=lowpass(y_slave,FilterFreq);
+
 end
