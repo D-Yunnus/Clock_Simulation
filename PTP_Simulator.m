@@ -62,16 +62,27 @@ for i=2:N/t+1
 
             if current_state==1
 
-                % PRP timestamping.
+                % Delay between message transmissions.
+
+                Delay_MS=normrnd(Delay,270*10^-9);
+                Delay_SM=normrnd(Delay,270*10^-9);
+
+                % PTP timestamping.
 
                 t_1=Master_Time(i);
-                t_2=Slave_Time(i)+Delay+normrnd(0,10^-12);
+                t_2=Slave_Time(i)+Delay_MS;
                 t_3=t_2;
-                t_4=Master_Time(i)+2*Delay+normrnd(0,10^-12);
+                t_4=Master_Time(i)+Delay_MS+Delay_SM;
 
-                % Calculate one way time of flight.
+                % Calculate two way time of flight.
 
-                one_way_flight=0.5*((t_4-t_1)-(t_3-t_2));
+                two_way_flight=((t_4-t_1)-(t_3-t_2));
+
+                % Calculate asymmetric one way time of flight.
+
+                alpha=Delay_MS/Delay_SM-1;
+
+                one_way_flight=((1+alpha)/(2+alpha))*two_way_flight;
 
                 % Time offset between slave and master clock.
 
