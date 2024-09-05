@@ -64,8 +64,8 @@ for i=2:N/t+1
 
                 % Delay between message transmissions.
 
-                Delay_MS=normrnd(Delay,270*10^-9);
-                Delay_SM=normrnd(Delay,270*10^-9);
+                Delay_MS=normrnd(Delay,40*10^-9);
+                Delay_SM=normrnd(Delay,40*10^-9);
 
                 % PTP timestamping.
 
