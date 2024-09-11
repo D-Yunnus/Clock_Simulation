@@ -1,4 +1,4 @@
-function [x,y,w] = Clock_Simulator(N,t,X_0,diff,mu)
+function [x,y,w] = Clock_Simulator(N,t,Clock)
 
 % The simulator solves numerically the Weiner process (brownian motion) that
 % describes a clocks deviation in time and frequency denoted x,y respectively.
@@ -16,6 +16,12 @@ function [x,y,w] = Clock_Simulator(N,t,X_0,diff,mu)
 % clock model.
 % These coefficients are related to the Allan variance of a clock - see
 % Diffusion_Coefficient_Estimator.m .
+
+% Clock Parameters.
+
+X_0=Clock(1:3);
+diff=Diffusion_Coefficient_Estimator(Clock(4),Clock(6),Clock(5),Clock(7),0);
+mu=Clock(8:10);
 
 % Initialize the outputs.
 

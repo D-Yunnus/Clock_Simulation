@@ -1,4 +1,4 @@
-function Slave_Freq = SyncE_Simulator( N , t , Master_Freq , X0_Slave , Diff_Slave , Mu_Slave , Adjustment , Filter_Freq , Packet_Loss_Matrix )
+function Slave_Freq = SyncE_Simulator( N , t , Master_Freq , Slave_Clock , Adjustment , Filter_Freq , Packet_Loss_Matrix )
 
 % The function simulates Synchronous Ethernet which phase locks a slave
 % clocks frequency with the master clocks frequency.
@@ -23,7 +23,7 @@ for i=2:N/t+1
     % Use Clock_Simulator.m to 
     % iterate next slave_frequency given the slave clock parameters.
 
-    [~,y,~]=Clock_Simulator(t,t,X0_Slave,Diff_Slave,Mu_Slave);
+    [~,y,~]=Clock_Simulator(t,t,Slave_Clock);
 
     % Check if packet makes the first-trip.
 

@@ -1,4 +1,4 @@
-function Slave_Time = PTP_Simulator( N , t , Master_Time , Slave_Freq , Slave_Drift , Diff_Slave , Mu_Slave , Sync_Interval , Distance, Avg_Speed , Packet_Loss_Matrix )
+function Slave_Time = PTP_Simulator( N , t , Master_Time , Slave_Freq , Slave_Clock , Sync_Interval , Distance, Avg_Speed , Packet_Loss_Matrix )
 
 % The function simulates the Precision Timing Protocol which at regular
 % intervals correct the slave clock to align with the master clock.
@@ -8,8 +8,9 @@ function Slave_Time = PTP_Simulator( N , t , Master_Time , Slave_Freq , Slave_Dr
 
 % Slave clock parameters.
 
-diff=Diff_Slave;
-mu=Mu_Slave;
+X_0=Slave_Clock(1:3);
+diff=Diffusion_Coefficient_Estimator(Slave_Clock(4),Slave_Clock(6),Slave_Clock(5),Slave_Clock(7),0);
+mu=Slave_Clock(8:10);
 
 % Define the delay time
 
@@ -39,7 +40,7 @@ for i=2:N/t+1
 
     noise=mvnrnd(zeros(1,3),Q,1);
 
-    Slave_Time(i)=Slave_Time(i-1)+t*(mu(1)+Slave_Freq(i-1))+(t^2/2)*(mu(2)+Slave_Drift)+(t^3/6)*mu(3)+noise(1);
+    Slave_Time(i)=Slave_Time(i-1)+t*(mu(1)+Slave_Freq(i-1))+(t^2/2)*(mu(2)+X_0(3))+(t^3/6)*mu(3)+noise(1);
         
     % PTP message exchange to correct slave time.
     % Check whether to preform ptp at the given time.

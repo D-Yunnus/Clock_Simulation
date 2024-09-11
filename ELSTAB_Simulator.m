@@ -1,4 +1,4 @@
-function [Slave_Time,Corrected_Freq,Corrected_Phase,Master_Time] = ELSTAB_Simulator( N , t , Master_Clock , Delay , Delay_Uncertainty , alpha , beta , Filter_Freq , Distance , Speed )
+function [Slave_Time,Corrected_Freq,Corrected_Phase,Master_Time,Master_Freq] = ELSTAB_Simulator( N , t , Master_Clock , Delay_Uncertainty , alpha , beta , Filter_Freq , Distance , Speed )
 
 % Initialise values.
 
@@ -12,17 +12,11 @@ Corrected_Phase=zeros(1,N/t+1);
 Corrected_Freq=zeros(1,N/t+1);
 Master_Time=zeros(1,N/t+1);
 
-% Parameters for master clock.
-
-X0_Master=Master_Clock(1:3);
-Diff_Master=Diffusion_Coefficient_Estimator(Master_Clock(4),Master_Clock(6),Master_Clock(5),Master_Clock(7),0);
-Mu_Master=Master_Clock(8:10);
-
 for i=2:N/t+1
 
     % Iterate the the master frequency.
 
-    [~,y,~]=Clock_Simulator(t,t,X0_Master,Diff_Master,Mu_Master);
+    [~,y,~]=Clock_Simulator(t,t,Master_Clock);
     Master_Freq(i)=y(end);
 
     % Calculate phase error per second and the accumulative phase.
@@ -32,7 +26,7 @@ for i=2:N/t+1
 
     % Generate delay phase.
 
-    Delay_Time=normrnd(Delay,Delay_Uncertainty);
+    Delay_Time=normrnd(Distance/Speed,Delay_Uncertainty);
     Delay_Phase(i)=Master_Phase(i)+Delay_Time;
     Delay_Err(i)=Delay_Phase(i)-Delay_Phase(i-1);
 
@@ -58,8 +52,9 @@ Corrected_Freq=lowpass(Corrected_Freq,Filter_Freq);
 
 % Loop master time.
 
-diff=Diff_Master;
-mu=Mu_Master;
+X0=Master_Clock(1:3);
+diff=Diffusion_Coefficient_Estimator(Master_Clock(4),Master_Clock(6),Master_Clock(5),Master_Clock(7),0);
+mu=Master_Clock(8:10);
 
 for i=2:N/t+1
 
@@ -75,6 +70,6 @@ end
 
 % Synchronise slave clock continuously.
 
-Slave_Time=PTP_Simulator(N,t,Master_Time,Corrected_Freq,X0_Master(3),Diff_Master,Mu_Master,2,Distance,Speed,[1,0;1,0]);
+Slave_Time=PTP_Simulator(N,t,Master_Time,Corrected_Freq,Master_Clock,2,Distance,Speed,[1,0;1,0]);
 
 end
