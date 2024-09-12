@@ -1,4 +1,4 @@
-function [time,freq,phase] = Network_Architecture_Simulation( N , t , Clocks , Logic_Matrix , Adjustment , Filter_Freq , Sync_Interval , Distance , Trans_Speed , P_Loss_Matrix )
+function [time,freq,phase] = Network_Architecture_Simulation( N , t , Clocks , Logic_Matrix , Adjustment , Filter_Freq , Sync_Interval , Delay , Distance , Speed , P_Loss_Matrix )
 
 % The function designs a network of clocks using white rabbit
 % synchronisation to synchronise master clocks at higher stratum levels
@@ -27,8 +27,7 @@ phase=zeros(No_of_Clocks,N/t+1);
 for i=1:No_of_Clocks
     if Clocks{i}{1}==1
         ref_clock=Clock_Type(Clocks{i});
-        diff_master=Diffusion_Coefficient_Estimator(ref_clock(4),ref_clock(6),ref_clock(5),ref_clock(7),0);
-        [time(i,:),freq(i,:),~]=Clock_Simulator(N,t,ref_clock(1:3),diff_master,ref_clock(8:10));
+        [time(i,:),freq(i,:),~]=Clock_Simulator(N,t,ref_clock);
     end
 end
 
@@ -49,11 +48,19 @@ for i=1:No_of_Clocks-1
 
             if Clocks{i}{1}<Clocks{j}{1}
                 Slave_Clock=Clock_Type(Clocks{j});
+
+                % Use White Rabbit.
+
+                [time(j,:),freq(j,:),phase(j,:)]=White_Rabbit_Simulator(N,t,time(i,:),freq(i,:),Slave_Clock,Adjustment,Filter_Freq,Sync_Interval,Distance(i,j),Speed(i,j),P_Loss_Matrix);
             end
+        
+        elseif Logic_Matrix(i,j)==2
 
-            % Use White Rabbit.
+            if Clocks{i}{1}<Clocks{j}{1}
+                % Use ELSTAB.
 
-            [time(j,:),freq(j,:),phase(j,:)]=White_Rabbit_Simulator(N,t,time(i,:),freq(i,:),Slave_Clock,Adjustment,Filter_Freq,Sync_Interval,Distance(i,j),Trans_Speed(i,j),P_Loss_Matrix);
+                [time(j,:),freq(j,:),phase(j,:),time(i,:),freq(i,:)]=ELSTAB_Simulator(N,t,Clock_Type(Clocks{i}),Delay,10^-12,0.999,0.999,0.01,Distance(i,j),Speed(i,j));
+            end
         end 
     end
 end

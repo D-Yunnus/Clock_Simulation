@@ -1,4 +1,4 @@
-function [Slave_Time,Corrected_Freq,Corrected_Phase,Master_Time,Master_Freq] = ELSTAB_Simulator( N , t , Master_Clock , Delay_Uncertainty , alpha , beta , Filter_Freq , Distance , Speed )
+function [Slave_Time,Corrected_Freq,Corrected_Phase,Master_Time,Master_Freq] = ELSTAB_Simulator( N , t , Master_Clock , Master_Freq , Delay , Delay_Uncertainty , alpha , beta , Filter_Freq , Distance , Speed )
 
 % Initialise values.
 
@@ -14,11 +14,6 @@ Master_Time=zeros(1,N/t+1);
 
 for i=2:N/t+1
 
-    % Iterate the the master frequency.
-
-    [~,y,~]=Clock_Simulator(t,t,Master_Clock);
-    Master_Freq(i)=y(end);
-
     % Calculate phase error per second and the accumulative phase.
 
     Master_Err(i)=0.5*(Master_Freq(i)-Master_Freq(i-1));
@@ -26,7 +21,7 @@ for i=2:N/t+1
 
     % Generate delay phase.
 
-    Delay_Time=normrnd(Distance/Speed,Delay_Uncertainty);
+    Delay_Time=normrnd(Delay,Delay_Uncertainty);
     Delay_Phase(i)=Master_Phase(i)+Delay_Time;
     Delay_Err(i)=Delay_Phase(i)-Delay_Phase(i-1);
 
@@ -64,7 +59,7 @@ for i=2:N/t+1
 
     noise=mvnrnd(zeros(1,3),Q,1);
 
-    Master_Time(i)=Master_Time(i-1)+t*(mu(1)+Master_Freq(i-1))+(t^2/2)*(mu(2)+0)+(t^3/6)*mu(3)+noise(1);
+    Master_Time(i)=Master_Time(i-1)+t*(mu(1)+Master_Freq(i-1))+(t^2/2)*(mu(2)+X0(3))+(t^3/6)*mu(3)+noise(1);
 
 end
 
