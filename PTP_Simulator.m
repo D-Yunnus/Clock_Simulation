@@ -14,7 +14,7 @@ mu=Slave_Clock(8:10);
 
 % Define the delay time
 
-Delay=Distance/Avg_Speed,10^-2*3*10^-8;
+Delay=Distance/Avg_Speed;
 
 % Initialise slave clock time deviation.
 
